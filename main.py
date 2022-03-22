@@ -1,46 +1,87 @@
-"""
-This is a hello world add-on for DocumentCloud.
 
-It demonstrates how to write a add-on which can be activated from the
-DocumentCloud add-on system and run using Github Actions.  It receives data
-from DocumentCloud via the request dispatch and writes data back to
+"""
+This is a metadata scraping plugin for DocumentCloud.
+It receives data from DocumentCloud via the request
+ dispatch and writes data back to
 DocumentCloud using the standard API
 """
 
 from documentcloud.addon import AddOn
+import csv
 
 
-class HelloWorld(AddOn):
-    """An example Add-On for DocumentCloud."""
+class MetaDataScrape(AddOn):
+    """A metadata scraping Add-On for DocumentCloud."""
 
     def main(self):
-        """The main add-on functionality goes here."""
         # fetch your add-on specific data
-        name = self.data.get("name", "world")
+        self.set_message("Beginning metadata scraping!")
 
-        self.set_message("Hello World start!")
+        # preset header + metadata list
+        header = ['id', 'title', 'privacy level', 'asset-url',
+                  'contributor', 'created at date', 'description', 'full text url', 'pdf url',
+                  'page count', 'Tags', 'Key Value Pairs']
+        metadata_list = []  # list o lists containing metadata for each document
 
-        # add a hello note to the first page of each selected document
+        # takes the document object and an empty array as input, and places the document metadata into the array
+        def set_data(doc, doc_metadata):
+
+            # document description break fix
+            try:
+                description = doc.description
+            except AttributeError:
+                description = ""
+
+            doc_metadata = [doc.id, doc.title, doc.access, doc.asset_url,
+                            doc.contributor, doc.created_at, description, doc.full_text_url,
+                            doc.pdf_url, doc.page_count]
+
+            # separate key values and tags into two separate arrays
+            key_values = doc.data
+            tags = ""
+
+            # are there any tags?
+            try:
+                tags = key_values['_tag']
+                del key_values['_tag']
+            except KeyError:
+                tags = ""
+
+            doc_metadata.append(tags)
+            doc_metadata.append(key_values)
+
+            return doc_metadata
+
+        # retrieve metadata information from each document.
         if self.documents:
-            length = len(self.documents)
             for i, doc_id in enumerate(self.documents):
-                self.set_progress(100 * i // length)
                 document = self.client.documents.get(doc_id)
-                document.annotations.create(f"Hello {name}!", 0)
+                # set the metadata
+                metadata_list.append(set_data(document, []))
         elif self.query:
-            documents = self.client.documents.search(self.query)[:3]
-            length = len(documents)
+            documents = self.client.documents.search(self.query)
             for i, document in enumerate(documents):
-                self.set_progress(100 * i // length)
-                document.annotations.create(f"Hello {name}!", 0)
+                metadata_list.append(set_data(document, []))
 
-        with open("hello.txt", "w+") as file_:
-            file_.write("Hello world!")
+        # the id of the first document + how many more documents will be the name of the file
+        try:
+            first_title = metadata_list[0][1]
+        except IndexError:
+            first_title = ""
+
+        with open("metadata_for-"+str(first_title)+"-_+"+str(len(metadata_list)-1)+".csv", "w+") as file_:
+            writer = csv.writer(file_)
+
+            # FORMAT HEADER
+            writer.writerow(header)
+
+            for row in metadata_list:
+                # FORMAT THE DATA
+                writer.writerow(row)
+
             self.upload_file(file_)
-
-        self.set_message("Hello World end!")
-        self.send_mail("Hello World!", "We finished!")
+        self.set_message("Metadata scraping end!")
 
 
 if __name__ == "__main__":
-    HelloWorld().main()
+    MetaDataScrape().main()

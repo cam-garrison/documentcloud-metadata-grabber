@@ -1,9 +1,7 @@
 
 # DocumentCloud Add-On Example
 
-This repository contains an example Add-On for DocumentCloud.  It is designed
-to be copied and modified to allow one to easily write Add-Ons to bring custom
-functionality to DocumentCloud.
+This repository contains a metadata scraper Add-On for DocumentCloud.
 
 ## Files
 
@@ -84,16 +82,9 @@ python main.py --documents 123 --data '{"name": "World"}'
 
 ### main.py
 
-This is the file to edit to implement your Add-On specific functionality.  You
-should define a class which inherits from `AddOn` from `addon.py`.  Then you
-can instantiate a new instance and call the main method, which is the entry
-point for your Add-On logic.  You may access the data parsed by `AddOn` as well
-as using the helper methods defined there.  The `HelloWorld` example Add-On
-demonstrates using many of these features.
-
-If you need to add more files, remember to instantiate the main Add-On class
-from a file called `main.py` - that is what the GitHub action will call with
-the Add-On parameters upon being dispatched.
+This is the file that implements the metadata scraping Add-On specific functionality.
+ 
+It contains the class MetadataScrape which inherits from AddOn from addon.py.
 
 ### config.yaml
 
@@ -102,34 +93,6 @@ DocumentCloud will use it to show a corresponding form with the proper fields.
 It uses the [JSON Schema](https://json-schema.org/) format, but allows you to
 use YAML for convenience.  You may read more about JSON Schema, but here are
 the basics to get started:
-
-```yaml
-# The title is the title of your Add-On
-title: Hello World
-# The description will be shown above the form when activating the Add-On
-description: This is an updated simple test add-on
-# Type should always be object
-type: object
-# Properties are the fields for your form
-properties:
-  # the key is the name of the variable that will be returned to your code
-  name:
-    # the title is what will be shown as the form label
-    title: Name
-    # a string is text
-    type: string
-```
-
-At the top level you have the following properties:
-
-* `title` - The title for your Add-On
-* `description` - a description for your Add-On - will be displayed above the
-  form when someone runs the add-on
-* `type` - This should always be set to `object`
-* `properties` - This is an object describing the data fields your add-on accepts
-    * The name will be the name of the variable the data is returned in
-    * `title` - The label shown on the form for this field
-    * `type` - This may be `string`, `number` or `boolean`
 
 ### requirements.txt
 
