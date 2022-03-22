@@ -75,9 +75,9 @@ You can also pass in a list of document IDs (`--documents`), a search query
 (`--query`), and JSON parameters for your Add-On (`--data`) - be sure to
 properly quote your JSON at the command line.
 
-Example invocation:
+Example invocation to run the script on document IDs 123 and 567:
 ```
-python main.py --documents 123 --data '{"name": "World"}'
+python main.py --documents 123 567
 ```
 
 ### main.py
