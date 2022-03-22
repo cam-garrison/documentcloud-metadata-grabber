@@ -69,7 +69,7 @@ class MetaDataScrape(AddOn):
         except IndexError:
             first_title = ""
 
-        with open("metadata_for-"+str(first_title)+"-_+"+str(len(metadata_list)-1)+".csv", "w+") as file_:
+        with open("metadata_for_"+str(first_title)+"_+"+str(len(metadata_list)-1)+".csv", "w+") as file_:
             writer = csv.writer(file_)
 
             # FORMAT HEADER
