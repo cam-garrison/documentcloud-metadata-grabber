@@ -54,13 +54,13 @@ class MetaDataScrape(AddOn):
 
         # retrieve metadata information from each document.
         if self.documents:
-            for i, doc_id in enumerate(self.documents):
+            for doc_id in self.documents:
                 document = self.client.documents.get(doc_id)
                 # set the metadata
                 metadata_list.append(set_data(document, []))
         elif self.query:
             documents = self.client.documents.search(self.query)
-            for i, document in enumerate(documents):
+            for document in documents:
                 metadata_list.append(set_data(document, []))
 
         # the id of the first document + how many more documents will be the name of the file
