@@ -27,10 +27,7 @@ class MetaDataScrape(AddOn):
         def set_data(doc, doc_metadata):
 
             # document description break fix
-            try:
-                description = doc.description
-            except AttributeError:
-                description = ""
+            description = getattr(doc, "description", "")
 
             doc_metadata = [doc.id, doc.title, doc.access, doc.asset_url,
                             doc.contributor, doc.created_at, description, doc.full_text_url,
@@ -41,11 +38,7 @@ class MetaDataScrape(AddOn):
             tags = ""
 
             # are there any tags?
-            try:
-                tags = key_values['_tag']
-                del key_values['_tag']
-            except KeyError:
-                tags = ""
+            tags = key_values.pop("_tag", "")
 
             doc_metadata.append(tags)
             doc_metadata.append(key_values)
@@ -69,7 +62,7 @@ class MetaDataScrape(AddOn):
         except IndexError:
             first_title = ""
 
-        with open("metadata_for_"+str(first_title)+"_+"+str(len(metadata_list)-1)+".csv", "w+") as file_:
+        with open(f"metadata_for_{str(first_title)}_+{str(len(metadata_list)-1)}.csv", "w+") as file_:
             writer = csv.writer(file_)
 
             # FORMAT HEADER
