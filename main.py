@@ -66,8 +66,6 @@ class MetaDataScrape(AddOn):
 
         # retrieve metadata information from each document.
         if self.documents:
-            print(self.documents)
-            print(self.client.documents.list)
             for document in self.client.documents.list(id__in=self.documents):
                 # set the metadata
                 metadata_list.append(set_data(document, []))
