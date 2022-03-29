@@ -1,4 +1,3 @@
-
 """
 This is a metadata scraping plugin for DocumentCloud.
 It receives data from DocumentCloud via the request
@@ -18,9 +17,20 @@ class MetaDataScrape(AddOn):
         self.set_message("Beginning metadata scraping!")
 
         # preset header + metadata list
-        header = ['id', 'title', 'privacy level', 'asset-url',
-                  'contributor', 'created at date', 'description', 'full text url', 'pdf url',
-                  'page count', 'Tags', 'Key Value Pairs']
+        header = [
+            "id",
+            "title",
+            "privacy level",
+            "asset-url",
+            "contributor",
+            "created at date",
+            "description",
+            "full text url",
+            "pdf url",
+            "page count",
+            "Tags",
+            "Key Value Pairs",
+        ]
         metadata_list = []  # list o lists containing metadata for each document
 
         # takes the document object and an empty array as input, and places the document metadata into the array
@@ -29,9 +39,18 @@ class MetaDataScrape(AddOn):
             # document description break fix
             description = getattr(doc, "description", "")
 
-            doc_metadata = [doc.id, doc.title, doc.access, doc.asset_url,
-                            doc.contributor, doc.created_at, description, doc.full_text_url,
-                            doc.pdf_url, doc.page_count]
+            doc_metadata = [
+                doc.id,
+                doc.title,
+                doc.access,
+                doc.asset_url,
+                doc.contributor,
+                doc.created_at,
+                description,
+                doc.full_text_url,
+                doc.pdf_url,
+                doc.page_count,
+            ]
 
             # separate key values and tags into two separate arrays
             key_values = doc.data
@@ -62,7 +81,9 @@ class MetaDataScrape(AddOn):
         except IndexError:
             first_title = ""
 
-        with open(f"metadata_for_{str(first_title)}_+{str(len(metadata_list)-1)}.csv", "w+") as file_:
+        with open(
+            f"metadata_for_{str(first_title)}_+{str(len(metadata_list)-1)}.csv", "w+"
+        ) as file_:
             writer = csv.writer(file_)
 
             # FORMAT HEADER
