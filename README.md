@@ -1,6 +1,8 @@
 
 # DocumentCloud Add-On Example
 
+Additional contributions by Dave Godfrey @EliteEagle77 found in this old repository: https://github.com/cam-garrison/documentcloud-plugins-poc
+
 This repository contains a metadata scraper Add-On for DocumentCloud.
 
 ## Files
