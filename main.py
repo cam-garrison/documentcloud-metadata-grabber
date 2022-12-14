@@ -29,7 +29,7 @@ class MetaDataScrape(AddOn):
             "title",
             "privacy level",
             "asset-url",
-            "contributor",
+            "user_id",
             "created at date",
             "description",
             "full text url",
@@ -48,7 +48,7 @@ class MetaDataScrape(AddOn):
                 doc.title,
                 doc.access,
                 doc.asset_url,
-                doc.contributor,
+                doc.user_id,
                 doc.created_at,
                 # description sometimes not present
                 getattr(doc, "description", ""),
@@ -65,8 +65,6 @@ class MetaDataScrape(AddOn):
 
             doc_metadata.append(tags)
             doc_metadata.append(key_values)
-
-            print(doc_metadata)
 
             return doc_metadata
 
