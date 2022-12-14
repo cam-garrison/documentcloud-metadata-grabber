@@ -5,8 +5,9 @@ It receives data from DocumentCloud via the request
 DocumentCloud using the standard API
 """
 
-from documentcloud.addon import AddOn
 import csv
+
+from documentcloud.addon import AddOn
 
 
 class MetaDataScrape(AddOn):
@@ -22,7 +23,7 @@ class MetaDataScrape(AddOn):
             "title",
             "privacy level",
             "asset-url",
-            "contributor",
+            "user_id",
             "created at date",
             "description",
             "full text url",
@@ -34,19 +35,17 @@ class MetaDataScrape(AddOn):
         metadata_list = []  # list o lists containing metadata for each document
 
         # takes the document object and an empty array as input, and places the document metadata into the array
-        def set_data(doc, doc_metadata):
-
-            # document description break fix
-            description = getattr(doc, "description", "")
+        def set_data(doc):
 
             doc_metadata = [
                 doc.id,
                 doc.title,
                 doc.access,
                 doc.asset_url,
-                doc.contributor,
+                doc.user_id,
                 doc.created_at,
-                description,
+                # description sometimes not present
+                getattr(doc, "description", ""),
                 doc.full_text_url,
                 doc.pdf_url,
                 doc.page_count,
@@ -54,7 +53,6 @@ class MetaDataScrape(AddOn):
 
             # separate key values and tags into two separate arrays
             key_values = doc.data
-            tags = ""
 
             # are there any tags?
             tags = key_values.pop("_tag", "")
@@ -65,14 +63,8 @@ class MetaDataScrape(AddOn):
             return doc_metadata
 
         # retrieve metadata information from each document.
-        if self.documents:
-            for document in self.client.documents.list(id__in=self.documents):
-                # set the metadata
-                metadata_list.append(set_data(document, []))
-        elif self.query:
-            documents = self.client.documents.search(self.query)
-            for document in documents:
-                metadata_list.append(set_data(document, []))
+        for document in self.get_documents():
+            metadata_list.append(set_data(document))
 
         # the id of the first document + how many more documents will be the name of the file
         try:
@@ -80,8 +72,9 @@ class MetaDataScrape(AddOn):
         except IndexError:
             first_title = ""
 
+
         with open(
-            f"metadata_for_{str(first_title)}_+{str(len(metadata_list)-1)}.csv", "w+"
+            f"metadata_for_{first_title}_+{len(metadata_list)-1}.csv", "w+"
         ) as file_:
             writer = csv.writer(file_)
 
@@ -93,6 +86,7 @@ class MetaDataScrape(AddOn):
                 writer.writerow(row)
 
             self.upload_file(file_)
+
         self.set_message("Metadata scraping end!")
 
 
