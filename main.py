@@ -6,13 +6,8 @@ DocumentCloud using the standard API
 """
 
 import csv
-import logging
 
 from documentcloud.addon import AddOn
-
-logger = logging.getLogger("documentcloud")
-logger.addHandler(logging.StreamHandler())
-logger.setLevel(logging.DEBUG)
 
 
 class MetaDataScrape(AddOn):
@@ -21,7 +16,6 @@ class MetaDataScrape(AddOn):
     def main(self):
         # fetch your add-on specific data
         self.set_message("Beginning metadata scraping!")
-        print("start")
 
         # preset header + metadata list
         header = [
@@ -70,7 +64,6 @@ class MetaDataScrape(AddOn):
 
         # retrieve metadata information from each document.
         for document in self.get_documents():
-            print(f"getting data for {document.id}")
             metadata_list.append(set_data(document))
 
         # the id of the first document + how many more documents will be the name of the file
@@ -79,7 +72,6 @@ class MetaDataScrape(AddOn):
         except IndexError:
             first_title = ""
 
-        print("Writing CSV")
 
         with open(
             f"metadata_for_{first_title}_+{len(metadata_list)-1}.csv", "w+"
@@ -93,11 +85,9 @@ class MetaDataScrape(AddOn):
                 # FORMAT THE DATA
                 writer.writerow(row)
 
-            print("Uploading CSV")
             self.upload_file(file_)
 
         self.set_message("Metadata scraping end!")
-        print("Done")
 
 
 if __name__ == "__main__":
