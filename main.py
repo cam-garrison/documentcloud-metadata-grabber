@@ -16,7 +16,12 @@ class MetaDataScrape(AddOn):
     def main(self):
         # fetch your add-on specific data
         self.set_message("Beginning metadata scraping!")
-
+        
+        # Add check that at least one document was selected before runnign the Add-On. 
+        if not self.documents:
+            self.set_message("Please select at least one document.")
+            return
+         
         # preset header + metadata list
         header = [
             "id",
