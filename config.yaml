@@ -2,6 +2,8 @@
 title: Metadata Grabber
 # The description will be shown above the form when activating the Add-On
 description: Takes metadata from a batch of documents and puts them in one csv file. 
+# Add instructions specific to the Add-On in the instructions field, optional
+instructions: ''
 # Type should always be object
 type: object
 # How does this add-on accept documents
